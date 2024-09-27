@@ -23,6 +23,7 @@ model User {
 
 model Campaign {
   id                 String  @id @default(uuid())
+  campaignName       String
   companyName        String
   companyDescription String
   productDescription String

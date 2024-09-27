@@ -1,11 +1,13 @@
 import express from 'express';
 import prisma from '../db/prisma';
 import { Response, Request } from 'express-serve-static-core';
+import { hashPassword } from '../bcrypt';
 
 const router = express.Router();
 
 router.post("/", async (req: Request, res: Response) => {
-    const {email, password, campaigns} = req.body;
+    let {email, password, campaigns} = req.body;
+    password = hashPassword(password)
     try {
         const user = await prisma.user.create({
             data: {email, password, campaigns }
