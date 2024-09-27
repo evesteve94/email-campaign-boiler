@@ -6,6 +6,8 @@ import passport from "passport";
 const app = express();
 
 app.use(express.json());
+
+//TODO: lägg till cookie-options
 app.use(
     session({
       secret: 'secretkey',
