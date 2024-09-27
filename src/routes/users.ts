@@ -1,13 +1,15 @@
 import express from 'express';
 import prisma from '../db/prisma';
 import { Response, Request } from 'express-serve-static-core';
-import { hashPassword } from '../bcrypt';
+import { hashPassword } from '../utils/bcrypt';
+import { handleValidationErrors} from '../utils/handleValidationErrors'
+import {validateCreateUser, validateUpdateUser, validateGetUser, validateDeleteUser} from '../validators/user-validators'
 
 
 const router = express.Router();
 
 // Create a new user
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", validateCreateUser, handleValidationErrors, async (req: Request, res: Response) => {
     let { email, password, campaigns } = req.body;
     password = hashPassword(password);
     try {
@@ -31,7 +33,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 // Get a user by ID
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", validateGetUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
         const user = await prisma.user.findUnique({
@@ -44,7 +46,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 // Update a user (PUT)
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", validateUpdateUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
     let { email, password } = req.body;
     
@@ -65,7 +67,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 });
 
 // **New PATCH Route for Partial Update**
-router.patch("/:id", async (req: Request, res: Response) => {
+router.patch("/:id", validateUpdateUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
     let { email, password, campaigns } = req.body;
     
@@ -99,7 +101,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
 });
 
 // Delete a user by ID
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", validateDeleteUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
         const user = await prisma.user.delete({

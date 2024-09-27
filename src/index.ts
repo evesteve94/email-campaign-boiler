@@ -1,9 +1,13 @@
 import express from "express";
-import userRouter from './routes/users'
 import session from 'express-session'
 import passport from "passport";
 import cookieParser from "cookie-parser"
+import isAuthenticated from './utils/isAuthenticated';
+
+//routes
 import authRouter from "./routes/auth"
+import userRouter from './routes/users'
+import campaignsRouter from './routes/campaigns'
 
 const app = express();
 
@@ -27,6 +31,8 @@ app.use(session({
 
 app.use("/api/users", userRouter )
 app.use("/api/auth", authRouter)
+// skyddad route - måste vara inloggad (isAuthenticated) för att se
+app.use("/api/campaigns", isAuthenticated, campaignsRouter)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
