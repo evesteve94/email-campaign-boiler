@@ -1,1 +1,2 @@
 # email-campaign-boiler
+# CampaignBonanzaMalmo
