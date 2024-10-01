@@ -110,40 +110,36 @@ router.put("/:id", validateUpdateCampaign, handleValidationErrors, async (req: R
 });
 
 router.patch("/:id", validateUpdateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const userId = getUserId(req); // Use the utility function
-  const { campaignName, companyName, companyDescription, productDescription, targetAudience } = req.body;
+    const { id } = req.params;
+    const userId = getUserId(req); // Use the utility function
+    const updateData: any = { ...req.body };
 
-  if (!userId) {
-      return res.status(401).json({ message: "User not authenticated." });
-  }
+    if (!userId) {
+        return res.status(401).json({ message: "User not authenticated." });
+    }
 
-  try {
-      const campaign = await prisma.campaign.findUnique({
-          where: { id },
-      });
+    try {
+        const campaign = await prisma.campaign.findUnique({
+            where: { id },
+        });
 
-      // Check if the campaign exists and belongs to the authenticated user
-      if (!campaign || campaign.userId !== userId) {
-          return res.status(404).json({ message: "Campaign not found or you do not have permission to update it." });
-      }
+        // Check if the campaign exists and belongs to the authenticated user
+        if (!campaign || campaign.userId !== userId) {
+            return res.status(404).json({ message: "Campaign not found or you do not have permission to update it." });
+        }
 
-      // Update only the fields that are provided in the request body
-      const updatedCampaign = await prisma.campaign.update({
-          where: { id },
-          data: {
-              campaignName: campaignName ?? campaign.campaignName,
-              companyName: companyName ?? campaign.companyName,
-              companyDescription: companyDescription ?? campaign.companyDescription,
-              productDescription: productDescription ?? campaign.productDescription,
-              targetAudience: targetAudience ?? campaign.targetAudience,
-          },
-      });
-      res.status(200).json(updatedCampaign);
-  } catch (err) {
-      res.status(400).json({ error: "Unable to update campaign." });
-  }
+        // Update only the fields that are provided in the request body
+        const updatedCampaign = await prisma.campaign.update({
+            where: { id },
+            data: updateData, // Spread the body directly for flexibility
+        });
+
+        res.status(200).json(updatedCampaign);
+    } catch (err) {
+        res.status(400).json({ error: "Unable to update campaign." });
+    }
 });
+
 
 // DELETE: Delete a campaign by ID
 router.delete("/:id", validateDeleteCampaign, handleValidationErrors, async (req: Request, res: Response) => {

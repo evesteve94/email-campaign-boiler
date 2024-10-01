@@ -66,27 +66,14 @@ router.put("/:id", validateUpdateUser, handleValidationErrors, async (req: Reque
     }
 });
 
-// **New PATCH Route for Partial Update**
+// Universal PATCH Route for Partial Update
 router.patch("/:id", validateUpdateUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
-    let { email, password, campaigns } = req.body;
+    const updateData: any = { ...req.body };
     
-    // Prepare an object to hold the fields that will be updated
-    const updateData: any = {};
-    
-    // If email is provided, add it to the updateData object
-    if (email) {
-        updateData.email = email;
-    }
-
-    // If password is provided, hash it and add it to the updateData object
-    if (password) {
-        updateData.password = hashPassword(password);
-    }
-
-    // If campaigns are provided, add them to the updateData object
-    if (campaigns) {
-        updateData.campaigns = campaigns;
+    // If password is provided, hash it
+    if (updateData.password) {
+        updateData.password = hashPassword(updateData.password);
     }
 
     try {
@@ -96,7 +83,7 @@ router.patch("/:id", validateUpdateUser, handleValidationErrors, async (req: Req
         });
         res.status(200).json(user);
     } catch (err) {
-        res.status(400).json({ err: "Unable to patch user" });
+        res.status(400).json({ err: "Unable to update user" });
     }
 });
 
