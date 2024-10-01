@@ -82,32 +82,37 @@ router.get("/:id", validateGetCampaign, handleValidationErrors, async (req: Requ
     }
 });
 
-// UPDATE: Update a campaign by ID
 router.put("/:id", validateUpdateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = getUserId(req); // Use the utility function
-    const { campaignName, companyName, companyDescription, productDescription, targetAudience } = req.body;
+    const updateData: any = { ...req.body }; // Spread all fields from request body
 
     if (!userId) {
         return res.status(401).json({ message: "User not authenticated." });
     }
 
     try {
-        const campaign = await prisma.campaign.update({
-            where: { id: id }, // Ensure campaign belongs to the user
-            data: {
-                campaignName,
-                companyName,
-                companyDescription,
-                productDescription,
-                targetAudience
-            }
+        // Ensure campaign exists and belongs to the authenticated user
+        const campaign = await prisma.campaign.findUnique({
+            where: { id },
         });
-        res.status(200).json(campaign);
+
+        if (!campaign || campaign.userId !== userId) {
+            return res.status(404).json({ message: "Campaign not found or you do not have permission to update it." });
+        }
+
+        // Update campaign with provided data
+        const updatedCampaign = await prisma.campaign.update({
+            where: { id },
+            data: updateData, // Use spread object to update all fields dynamically
+        });
+
+        res.status(200).json(updatedCampaign);
     } catch (err) {
         res.status(400).json({ error: "Unable to update campaign." });
     }
 });
+
 
 router.patch("/:id", validateUpdateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;

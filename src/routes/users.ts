@@ -48,23 +48,26 @@ router.get("/:id", validateGetUser, handleValidationErrors, async (req: Request,
 // Update a user (PUT)
 router.put("/:id", validateUpdateUser, handleValidationErrors, async (req: Request, res: Response) => {
     const { id } = req.params;
-    let { email, password } = req.body;
-    
+    const updateData: any = { ...req.body }; // Spread all fields from request body
+
     // Hash the password if it exists in the request body
-    if (password) {
-        password = hashPassword(password);
+    if (updateData.password) {
+        updateData.password = hashPassword(updateData.password);
     }
 
     try {
+        // Update user with provided data
         const user = await prisma.user.update({
-            where: { id: id },
-            data: { email, password },
+            where: { id },
+            data: updateData, // Use spread object to update all fields dynamically
         });
+
         res.status(200).json(user);
     } catch (err) {
-        res.status(400).json({ err: "Unable to update user" });
+        res.status(400).json({ error: "Unable to update user" });
     }
 });
+
 
 // Universal PATCH Route for Partial Update
 router.patch("/:id", validateUpdateUser, handleValidationErrors, async (req: Request, res: Response) => {
