@@ -1,10 +1,12 @@
 import express from 'express';
 import prisma from '../db/prisma';
 import { Response, Request } from 'express-serve-static-core';
-import {validateCreateCampaign, validateUpdateCampaign, validateGetCampaign, validateDeleteCampaign} from '../validators/campaign-validators'
-import { handleValidationErrors } from '../utils/handleValidationErrors';
+import isAuthenticated from '../utils/isAuthenticated'; // Make sure this import is correct
 
-const router = express.Router()
+const router = express.Router();
+
+// Apply isAuthenticated middleware to all routes in this router
+router.use(isAuthenticated);
 
 // Utility function to extract userId from request
 export function getUserId(req: Request): string | null {
@@ -15,7 +17,7 @@ router.get('/dashboard', (req: Request, res: Response) => {
     res.json({ message: 'Welcome to your dashboard!' });
   });
 
-  router.post("/", validateCreateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
+  router.post("/", async (req: Request, res: Response) => {
     const { campaignName, companyName, companyDescription, productDescription, targetAudience } = req.body;
     const userId = getUserId(req); // Use the utility function
 
@@ -41,25 +43,19 @@ router.get('/dashboard', (req: Request, res: Response) => {
 });
 
 // READ: Get all campaigns for the authenticated user
-router.get("/", validateGetCampaign, handleValidationErrors, async (req: Request, res: Response) => {
-    const userId = getUserId(req); // Use the utility function
-
-    if (!userId) {
-        return res.status(401).json({ message: "User not authenticated." });
-    }
-
+// READ: Get all campaigns for the authenticated user
+router.get("/", async (req: Request, res: Response) => {
     try {
-        const campaigns = await prisma.campaign.findMany({
-            where: { userId } // Only fetch campaigns for this user
-        });
+        const campaigns = await prisma.campaign.findMany();
         res.status(200).json(campaigns);
     } catch (err) {
+        console.error("Error fetching all campaigns:", err);
         res.status(400).json({ error: "Unable to retrieve campaigns." });
     }
 });
 
 // READ: Get a specific campaign by ID
-router.get("/:id", validateGetCampaign, handleValidationErrors, async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = getUserId(req); // Use the utility function
 
@@ -82,7 +78,7 @@ router.get("/:id", validateGetCampaign, handleValidationErrors, async (req: Requ
     }
 });
 
-router.put("/:id", validateUpdateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = getUserId(req); // Use the utility function
     const updateData: any = { ...req.body }; // Spread all fields from request body
@@ -114,7 +110,7 @@ router.put("/:id", validateUpdateCampaign, handleValidationErrors, async (req: R
 });
 
 
-router.patch("/:id", validateUpdateCampaign, handleValidationErrors, async (req: Request, res: Response) => {
+router.patch("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = getUserId(req); // Use the utility function
     const updateData: any = { ...req.body };
@@ -147,7 +143,7 @@ router.patch("/:id", validateUpdateCampaign, handleValidationErrors, async (req:
 
 
 // DELETE: Delete a campaign by ID
-router.delete("/:id", validateDeleteCampaign, handleValidationErrors, async (req: Request, res: Response) => {
+router.delete("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = getUserId(req); // Use the utility function
 

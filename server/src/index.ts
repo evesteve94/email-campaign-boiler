@@ -3,6 +3,7 @@ import session from 'express-session'
 import passport from "passport";
 import cookieParser from "cookie-parser"
 import isAuthenticated from './utils/isAuthenticated';
+import cors from 'cors';
 
 //routes
 import authRouter from "./routes/auth"
@@ -11,17 +12,25 @@ import campaignsRouter from './routes/campaigns'
 
 const app = express();
 
-app.use(express.json());
+// Update the CORS configuration
+app.use(cors({
+  origin: 'http://localhost:5173', // Allow requests from your client's origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+  credentials: true, // Allow cookies to be sent with requests
+}));
 
-//TODO: lägg till cookie-options
+app.use(express.json());
 app.use(cookieParser('malmo')); // Pass secret here
 app.use(express.json());
 app.use(session({
-  secret: 'malmo', //borde vara mer komplext,
-  saveUninitialized: false, //sparar inte sessions som inte har aktivitet
+  secret: process.env.SESSION_SECRET || 'a-more-secure-secret-key', // Use an environment variable for the secret
+  saveUninitialized: false,
   resave: false,
   cookie: {
-    maxAge: 60000 * 60
+    maxAge: 60000 * 60,
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true // Prevent client-side access to the cookie
   }
 }));
   
