@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api'; // Import the configured Axios instance
 
 interface Campaign {
@@ -14,21 +14,35 @@ interface Campaign {
 const CampaignDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
         const response = await api.get(`/campaigns/${id}`);
         setCampaign(response.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching campaign:', error);
+        if (error.response && error.response.status === 404) {
+          setError('Campaign not found');
+        } else if (error.response && error.response.status === 401) {
+          setError('You need to be logged in to view this campaign');
+          setTimeout(() => navigate('/'), 3000);
+        } else {
+          setError('An error occurred while fetching the campaign');
+        }
       }
     };
 
     if (id) {
       fetchCampaign();
     }
-  }, [id]);
+  }, [id, navigate]);
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
 
   if (!campaign) {
     return <div>Loading...</div>;

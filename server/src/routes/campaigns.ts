@@ -57,7 +57,7 @@ router.get("/", async (req: Request, res: Response) => {
 // READ: Get a specific campaign by ID
 router.get("/:id", async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = getUserId(req); // Use the utility function
+    const userId = getUserId(req);
 
     if (!userId) {
         return res.status(401).json({ message: "User not authenticated." });
@@ -65,7 +65,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
     try {
         const campaign = await prisma.campaign.findUnique({
-            where: { id, userId } // Ensure the campaign belongs to the authenticated user
+            where: { id }
         });
 
         if (!campaign) {
@@ -74,7 +74,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
         res.status(200).json(campaign);
     } catch (err) {
-        res.status(400).json({ error: "Unable to retrieve campaign." });
+        console.error("Error retrieving campaign:", err);
+        res.status(500).json({ error: "Unable to retrieve campaign." });
     }
 });
 
