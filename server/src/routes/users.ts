@@ -8,8 +8,9 @@ const router = express.Router();
 // Create a new user
 router.post("/", async (req: Request, res: Response) => {
     let { email, password, campaigns } = req.body;
-    password = hashPassword(password);
     try {
+        
+        password = hashPassword(password);
         const user = await prisma.user.create({
             data: { email, password, campaigns },
         });

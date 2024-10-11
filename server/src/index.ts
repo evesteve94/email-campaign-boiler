@@ -4,6 +4,7 @@ import passport from "passport";
 import cookieParser from "cookie-parser"
 import isAuthenticated from './utils/isAuthenticated';
 import cors from 'cors';
+import emailRoutes from './routes/emails';
 
 //routes
 import authRouter from "./routes/auth"
@@ -42,6 +43,7 @@ app.use("/api/users", userRouter )
 app.use("/api/auth", authRouter)
 // skyddad route - måste vara inloggad (isAuthenticated) för att se
 app.use("/api/campaigns", isAuthenticated, campaignsRouter)
+app.use('/api/emails', emailRoutes)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
