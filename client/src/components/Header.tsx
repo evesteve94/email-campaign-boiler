@@ -1,12 +1,6 @@
 import api from '@/api';
-import React from 'react';
-import { Link } from 'react-router-dom';
-
-
-const handleLogout = () => {
-  api.post('/auth/logout')
-  console.log('User logged out');
-};
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
