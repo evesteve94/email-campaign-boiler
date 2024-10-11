@@ -12,7 +12,7 @@ router.post("/", async (req: Request, res: Response) => {
         
         password = hashPassword(password);
         const user = await prisma.user.create({
-            data: { email, password, campaigns },
+            data: { email, password },
         });
         res.status(201).json(user);
     } catch (err) {

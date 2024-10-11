@@ -1,58 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api'; // Import the configured Axios instance
-import { Link } from 'react-router-dom';
+import api from '../api';
+import LoginForm from '../components/LoginForm';
 
 const HomePage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await api.post('/auth/login', { email, password });
-      // Handle successful login (e.g., store token, redirect)
-      console.log('Logged in:', response.data);
-      navigate('/campaigns');
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        await api.get('/auth/status');
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Welcome to Campaign Manager</h1>
-      <form onSubmit={handleLogin} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block mb-1">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-            required
-          />
+    <div className="form-container p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Welcome to Campaign Manager</h1>
+      {isLoggedIn ? (
+        <div className="text-center">
+          <p className="mb-4">You are logged in!</p>
+          <button
+            onClick={() => navigate('/campaigns')}
+            className="btn btn-primary"
+          >
+            Go to Campaigns
+          </button>
         </div>
+      ) : (
         <div>
-          <label htmlFor="password" className="block mb-1">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 border rounded"
-            required
-          />
+          <LoginForm onLoginSuccess={handleLoginSuccess} />
+          <div className="mt-4 text-center">
+            <p>Don't have an account?</p>
+            <button
+              onClick={() => navigate('/register')}
+              className="btn btn-secondary mt-2"
+            >
+              Register
+            </button>
+          </div>
         </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-          Log In
-        </button>
-        <Link to="/register" className="text-blue-600 hover:underline">
-        <button>Register</button>
-        </Link>
-      </form>
+      )}
     </div>
   );
 };
