@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api'; // Import the configured Axios instance
+import { Link } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -48,6 +49,9 @@ const HomePage: React.FC = () => {
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
           Log In
         </button>
+        <Link to="/register" className="text-blue-600 hover:underline">
+        <button>Register</button>
+        </Link>
       </form>
     </div>
   );

@@ -43,7 +43,7 @@ const CampaignsPage: React.FC = () => {
         if (error.response && error.response.status === 401) {
           setError('You need to be logged in to view campaigns.');
           // Redirect to login page after a short delay
-          setTimeout(() => navigate('/login'), 3000);
+          setTimeout(() => navigate('/'), 3000);
         } else {
           setError('An error occurred while fetching campaigns.');
         }

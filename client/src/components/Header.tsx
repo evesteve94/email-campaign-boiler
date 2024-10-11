@@ -1,5 +1,12 @@
+import api from '@/api';
 import React from 'react';
 import { Link } from 'react-router-dom';
+
+
+const handleLogout = () => {
+  api.post('/auth/logout')
+  console.log('User logged out');
+};
 
 const Header: React.FC = () => {
   return (
@@ -9,6 +16,8 @@ const Header: React.FC = () => {
         <ul className="flex space-x-4">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/campaigns">Campaigns</Link></li>
+          <li><Link to="/register">Register</Link></li>
+          <li><button onClick={handleLogout}>Logout</button></li>
         </ul>
       </nav>
     </header>
