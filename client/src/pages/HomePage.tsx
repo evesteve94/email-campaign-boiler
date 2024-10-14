@@ -1,24 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../api';
+import { useAuth } from '../context/AuthContext';
 import LoginForm from '../components/LoginForm';
 
 const HomePage: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        await api.get('/auth/status');
-        setIsLoggedIn(true);
-      } catch (error) {
-        setIsLoggedIn(false);
-      }
-    };
-
-    checkLoginStatus();
-  }, []);
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);

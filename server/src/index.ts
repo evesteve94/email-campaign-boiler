@@ -23,7 +23,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser('malmo')); // Pass secret here
-app.use(express.json());
 app.use(session({
   secret: process.env.SESSION_SECRET || 'a-more-secure-secret-key', // Use an environment variable for the secret
   saveUninitialized: false,
