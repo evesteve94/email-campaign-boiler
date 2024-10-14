@@ -41,12 +41,31 @@ async function saveEmailToDatabase(email: EmailResponse, campaignId: string) {
     }
 }
 
+async function checkFormerEmails(campaignId: string) {
+    try {
+        const formerEmails = await prisma.email.findMany({
+            where: { campaignId },
+            select: { subject: true, content: true },
+        });
+        const formerEmailData = formerEmails.map(
+            (email) => `Title: ${email.subject}, Content: ${email.content}`
+        );
+        return formerEmailData;
+    } catch (error) {
+        console.error("Error checking for former emails:", error);
+        throw new Error("Failed to retrieve former emails");
+    }
+}
+
+
 // Create a new email for a specific campaign
 router.post("/", async (req: Request, res: Response) => {
     try {
         const { id, campaignName, companyName, productDescription, companyDescription, targetAudience } = EmailRequestSchema.parse(req.body);
 
-        const prompt = `You are a marketing expert that creates emails for campaigns by carefully considering the campaign name, company name, product description, company description and target audience. You are also a great copywriter and you write emails that are engaging and persuasive. All your emails are captivating, concise and to the point. Here are the details: Campaign name: ${campaignName}, Company name: ${companyName}, Product description: ${productDescription}, Company description: ${companyDescription}, Target audience: ${targetAudience}. Write an email that will be sent to the target audience.`;
+        const formerContent = checkFormerEmails(id);
+
+        const prompt = `You are a marketing expert that creates emails for campaigns by carefully considering the campaign name, company name, product description, company description and target audience. You are also a great copywriter and you write emails that are engaging and persuasive. All your emails are captivating, concise and to the point. Here are the details: Campaign name: ${campaignName}, Company name: ${companyName}, Product description: ${productDescription}, Company description: ${companyDescription}, Target audience: ${targetAudience}. Write an email that will be sent to the target audience. Make sure the new email is different from these emails already written: ${formerContent}. The new email need to have an original title and original content, different from the other emails.`;
 
         const { object } = await generateObject({
             model: openai("gpt-4o"),

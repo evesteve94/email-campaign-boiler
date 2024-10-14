@@ -65,6 +65,17 @@ const CampaignDetailPage: React.FC = () => {
     }
   };
 
+  const handleDeleteEmail = async (emailId: string) => {
+    try {
+      await api.delete(`/emails/${emailId}`);
+      // Remove the deleted email from the state
+      setEmails(emails.filter(email => email.id !== emailId));
+    } catch (error) {
+      console.error('Error deleting email:', error);
+      // You might want to show an error message to the user here
+    }
+  };
+
   if (!campaign) {
     return <div>Loading...</div>;
   }
@@ -95,7 +106,14 @@ const CampaignDetailPage: React.FC = () => {
             <div key={email.id} className="border p-4 rounded-lg">
               <h3 className="text-xl font-semibold mb-2">{email.subject}</h3>
               <p className="mb-2"><strong>Recipients:</strong> {email.recipients.join(', ')}</p>
-              <p className="whitespace-pre-wrap">{email.content}</p>
+              <p className="whitespace-pre-wrap mb-4">{email.content}</p>
+              {/* Delete button */}
+              <button
+                onClick={() => handleDeleteEmail(email.id)}
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Delete Email
+              </button>
             </div>
           ))}
         </div>
