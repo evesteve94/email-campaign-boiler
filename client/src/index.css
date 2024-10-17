@@ -3,9 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --primary-color: #5acbff; /* sky-500 */
+  --primary-color: #5acbff;
+  /* sky-500 */
   --background-color: #ffffff;
   --text-color: #000000;
+  color: black !important;
+}
+
+input {
+  color: black;
 }
 
 body {
