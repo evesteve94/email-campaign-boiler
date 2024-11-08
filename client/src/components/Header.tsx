@@ -25,6 +25,24 @@ const Header: React.FC = () => {
           <Link to="/" className="text-2xl font-bold">Campaign Manager</Link>
           <ul className="flex space-x-4 items-center">
             <li><Link to="/">Home</Link></li>
+            <li><Link to="/">Bajs</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
+            <li><Link to="/">Råtta</Link></li>
             <li><Link to="/campaigns">Campaigns</Link></li>
             {isLoggedIn && (
               <li>
