@@ -1,70 +1,70 @@
-# specify the version of docker-compose
+# specificerar versionen av docker-compose
 version: "3.8"
 
-# define the services/containers to be run
+# definierar tjänsterna/containrarna som ska köras
 services:
-  # define the frontend service
-  # we can use any name for the service. A standard naming convention is to use "web" for the frontend
+  # definierar frontend-tjänsten
+  # vi kan använda valfritt namn för tjänsten, standardnamn är ofta "web" för frontend
   web:
-    # we use depends_on to specify that service depends on another service
-    # in this case, we specify that the web depends on the api service
-    # this means that the api service will be started before the web service
+    # depends_on anger att tjänsten är beroende av en annan tjänst
+    # här specificeras att web är beroende av api-tjänsten
+    # detta innebär att api-tjänsten startas innan web-tjänsten
     depends_on: 
       - api
-    # specify the build context for the web service
-    # this is the directory where the Dockerfile for the web service is located
+    # anger byggkontexten för web-tjänsten
+    # detta är katalogen där Dockerfilen för web-tjänsten finns
     build: ./client
-    # specify the ports to expose for the web service
-    # the first number is the port on the host machine
-    # the second number is the port inside the container
+    # anger portarna som ska exponeras för web-tjänsten
+    # första numret är porten på värddatorn
+    # andra numret är porten inne i containern
     ports:
-    # port mapping for the web service
+    # portmappning för web-tjänsten
     # #################################################################
-    # IMPORTANT frontend package.json script --> "dev": "vite --host",
+    # VIKTIGT frontend package.json script --> "dev": "vite --host",
     # #################################################################
       - 5173:5173
-    # specify the environment variables for the web service
-    # these environment variables will be available inside the container
+    # anger miljövariabler för web-tjänsten
+    # dessa miljövariabler kommer att vara tillgängliga i containern
     environment:
       VITE_API_URL: http://localhost:3007
 
-    # this is for docker compose watch mode
-    # anything mentioned under develop will be watched for changes by docker compose watch and it will perform the action mentioned
+    # detta är för docker-compose watch-läge
+    # allt under "develop" kommer att övervakas av docker-compose watch och utföra åtgärden som anges
     develop:
-      # we specify the files to watch for changes
+      # specificerar filer som ska övervakas för ändringar
       watch:
-        # it'll watch for changes in package.json and package-lock.json and rebuild the container if there are any changes
+        # övervakar ändringar i package.json och package-lock.json och bygger om containern vid ändringar
         - path: ./client/package.json
           action: rebuild
         - path: ./client/package-lock.json
           action: rebuild
-        # it'll watch for changes in the frontend directory and sync the changes with the container real time
+        # övervakar ändringar i frontend-mappen och synkar ändringarna i realtid med containern
         - path: ./client
           target: /app
           action: sync
 
-  # define the api service/container
+  # definierar api-tjänsten/containern
   api: 
-    # specify the build context for the api service
+    # anger byggkontexten för api-tjänsten
     build: ./server
     
-    # specify the ports to expose for the api service
-    # the first number is the port on the host machine
-    # the second number is the port inside the container
+    # anger portarna som ska exponeras för api-tjänsten
+    # första numret är porten på värddatorn
+    # andra numret är porten inne i containern
     ports: 
       - 3007:3007
 
-    # establish docker compose watch mode for the api service
+    # aktiverar docker-compose watch-läge för api-tjänsten
     develop:
-      # specify the files to watch for changes
+      # specificerar filer som ska övervakas för ändringar
       watch:
-        # it'll watch for changes in package.json and package-lock.json and rebuild the container and image if there are any changes
+        # övervakar ändringar i package.json och package-lock.json och bygger om containern och bilden vid ändringar
         - path: ./server/package.json
           action: rebuild
         - path: ./server/package-lock.json
           action: rebuild
         
-        # it'll watch for changes in the backend directory and sync the changes with the container real time
+        # övervakar ändringar i backend-mappen och synkar ändringarna i realtid med containern
         - path: ./server
           target: /app
           action: sync
