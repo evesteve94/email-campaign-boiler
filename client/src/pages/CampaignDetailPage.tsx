@@ -90,6 +90,7 @@ const CampaignDetailPage: React.FC = () => {
 
   const handleSendEmails = async (email: Email) => {
     try {
+      console.log(email.recipients);
       await api.post(`/emails/sendall`, {
         recipients: email.recipients,
         subject: email.subject,

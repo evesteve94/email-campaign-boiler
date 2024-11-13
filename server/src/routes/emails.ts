@@ -174,7 +174,7 @@ router.post("/sendall", async (req: Request, res: Response) => {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: "Mirza Mesinovic <mirza.mesinovic@chasacademy.se>",
+      from: "Acme <onboarding@resend.dev>",
       to: recipients,
       subject: subject,
       html: `<strong><h1>${subject}</h1></strong>
