@@ -48,5 +48,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/campaigns", isAuthenticated, campaignsRouter);
 app.use("/api/emails", emailRoutes);
 
+if (process.env.NODE_ENV !== 'test') {
 const PORT = process.env.PORT || 3007;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}
+
+export default app;
