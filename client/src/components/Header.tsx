@@ -19,7 +19,7 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-blue-600 text-white p-4 w-full">
+    <header data-testid="header" className="bg-blue-600 text-white p-4 w-full">
       <div className="container mx-auto">
         <nav className="flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold">Campaign Manager</Link>
@@ -27,22 +27,7 @@ const Header: React.FC = () => {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/">Bajs</Link></li>
             <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
-            <li><Link to="/">Råtta</Link></li>
+
             <li><Link to="/campaigns">Campaigns</Link></li>
             {isLoggedIn && (
               <li>
